@@ -18,6 +18,37 @@ This repository contains Kubernetes manifests for deploying Nginx with a Persist
 └── index.html           # Custom webpage content
 ```
 
+## Storage Configuration
+
+### StorageClass Selection
+
+The PVC is configured to use the `standard` StorageClass by default. To use a different StorageClass:
+
+1. List available StorageClasses in your cluster:
+```bash
+kubectl get storageclass
+```
+
+2. Edit the `nginx-pv.yaml` file and update the `storageClassName` field:
+```yaml
+spec:
+  storageClassName: your-storage-class-name  # Replace with your desired StorageClass
+```
+
+Common StorageClass options:
+- `standard` - Default StorageClass in most clusters
+- `managed-premium` - Premium storage (e.g., Azure Premium SSD)
+- `gp2` - AWS EBS GP2 volumes
+- `pd-standard` - Google Cloud Persistent Disk Standard
+- `longhorn` - Longhorn storage
+- `local-path` - Local storage (for development)
+
+### Storage Requirements
+
+- Storage Size: 1Gi
+- Access Mode: ReadWriteOnce
+- Storage Type: Dynamic provisioning based on StorageClass
+
 ## Deployment Steps
 
 1. Clone the repository:
@@ -58,10 +89,10 @@ http://<node-ip>:<node-port>
 
 ## Configuration Details
 
-### PersistentVolume
+### PersistentVolumeClaim
 - Storage: 1Gi
 - Access Mode: ReadWriteOnce
-- Storage Type: hostPath (for demonstration)
+- Storage Class: standard (configurable)
 
 ### Nginx Deployment
 - Image: nginx:latest
@@ -84,9 +115,10 @@ kubectl delete -f nginx-pv.yaml
 
 ## Notes
 
-- This setup uses hostPath for demonstration purposes. In production, use appropriate storage solutions like AWS EBS, Azure Disk, or GCP Persistent Disk.
 - The PVC is configured with ReadWriteOnce access mode.
 - The service is exposed as NodePort for external access.
+- StorageClass selection depends on your cluster's available storage providers.
+- For production environments, choose a StorageClass that matches your requirements for performance, availability, and cost.
 
 ## Contributing
 
