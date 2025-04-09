@@ -15,7 +15,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: nginx-pvc
 spec:
-  storageClassName: standard
+  storageClassName: nirmata-hostpath
   accessModes:
     - ReadWriteOnce
   resources:
